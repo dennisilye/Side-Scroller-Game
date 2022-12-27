@@ -13,8 +13,20 @@ export class Enemy {
     this.fps = 20;
     this.frameTimer = 0;
     this.frameInterval = 1000 / this.fps;
+    this.markedForDeletion = false;
   }
   draw(context) {
+    context.strokeStyle = "white";
+    context.strokeRect(this.x, this.y, this.width, this.height);
+    context.beginPath();
+    context.arc(
+      this.x + this.width / 2,
+      this.y + this.height / 2,
+      this.width / 2,
+      0,
+      Math.PI * 2
+    );
+    context.stroke();
     context.drawImage(
       this.image,
       this.frameX * this.width,
@@ -36,5 +48,6 @@ export class Enemy {
       this.frameTimer += deltaTime;
     }
     this.x -= this.speed;
+    if (this.x < 0 - this.width) this.markedForDeletion = true;
   }
 }

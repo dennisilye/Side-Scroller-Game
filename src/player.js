@@ -1,5 +1,5 @@
 export class Player {
-  constructor(gameWidth, gameHeight) {
+  constructor(gameWidth, gameHeight, gameOver) {
     this.gameWidth = gameWidth;
     this.gameHeight = gameHeight;
     this.width = 200;
@@ -16,9 +16,22 @@ export class Player {
     this.fps = 20;
     this.frameTimer = 0;
     this.frameInterval = 1000 / this.fps;
+    this.gameOver = gameOver;
   }
 
   draw(context) {
+    context.strokeStyle = "white";
+    context.strokeRect(this.x, this.y, this.width, this.height);
+    context.beginPath();
+    context.arc(
+      this.x + this.width / 2,
+      this.y + this.height / 2,
+      this.height / 2,
+      this.width / 2,
+      0,
+      Math.PI * 2
+    );
+    context.stroke();
     context.drawImage(
       this.image,
       this.frameX * this.width,
@@ -32,7 +45,16 @@ export class Player {
     );
   }
 
-  update(input, deltaTime) {
+  update(input, deltaTime, enemies) {
+    enemies.forEach((enemy) => {
+      const dx = (enemy.x + enemy.width / 2) - (this.x + this.width / 2);
+      const dy = (enemy.y + enemy.height / 2) - (this.y + this.height / 2);
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      if (distance < enemy.width / 2 + this.width / 2) {
+        console.log("collision detected");
+        this.gameOver();
+      }
+    });
 
     if (this.frameTimer > this.frameInterval) {
       if (this.frameX >= this.maxFrame) this.frameX = 0;
@@ -60,8 +82,10 @@ export class Player {
     this.y += this.vy;
     if (!this._onGround()) {
       this.vy += this.weight;
+      this.maxFrame = 5;
     } else {
       this.vy = 0;
+      this.maxFrame = 8;
     }
 
     if (this.y > this.gameHeight - this.height)

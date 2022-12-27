@@ -9,6 +9,8 @@ window.addEventListener("load", function () {
   canvas.width = 800;
   canvas.height = 720;
   let enemies = [];
+  let score = 0;
+  let isGameOver = false;
 
   function handleEnemies(deltaTime) {
     if (enemyTimer > enemyInterval + randomEnemyInterval) {
@@ -21,13 +23,28 @@ window.addEventListener("load", function () {
     enemies.forEach((enemy) => {
       enemy.draw(ctx);
       enemy.update(deltaTime);
+      if (enemy.markedForDeletion) score++;
     });
+    enemies = enemies.filter((enemy) => !enemy.markedForDeletion);
   }
 
-  function displayStatusText() {}
+  function displayStatusText(context) {
+    context.fillStyle = "black";
+    context.font = "40px Helvetica";
+    context.fillText("Score: " + score, 20, 50);
+    if (isGameOver) {
+        context.textAlign = 'center'
+        context.fillStyle = 'black'
+        context.fillText('GAME OVER, try again!', canvas.width /2 , 200)
+    }
+  }
+
+  function gameOver() {
+    isGameOver = true;
+  }
 
   const input = new InputHandler();
-  const player = new Player(canvas.width, canvas.height);
+  const player = new Player(canvas.width, canvas.height, gameOver);
   const background = new Background(canvas.width, canvas.height);
 
   let lastTime = 0;
@@ -42,9 +59,10 @@ window.addEventListener("load", function () {
     background.draw(ctx);
     background.update();
     player.draw(ctx);
-    player.update(input, deltaTime);
+    player.update(input, deltaTime, enemies);
     handleEnemies(deltaTime);
-    requestAnimationFrame(animate);
+    displayStatusText(ctx);
+    if (!isGameOver) requestAnimationFrame(animate);
   }
   animate(0);
 });
