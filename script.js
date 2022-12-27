@@ -43,6 +43,14 @@ window.addEventListener("load", function () {
     isGameOver = true;
   }
 
+  function restartGame() {
+    player.restart()
+    enemies = [];
+    score = 0;
+    isGameOver = false;
+    animate(0)
+  } 
+
   const input = new InputHandler();
   const player = new Player(canvas.width, canvas.height, gameOver);
   const background = new Background(canvas.width, canvas.height);

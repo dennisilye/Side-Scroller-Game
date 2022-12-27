@@ -21,17 +21,6 @@ export class Player {
 
   draw(context) {
     context.strokeStyle = "white";
-    context.strokeRect(this.x, this.y, this.width, this.height);
-    context.beginPath();
-    context.arc(
-      this.x + this.width / 2,
-      this.y + this.height / 2,
-      this.height / 2,
-      this.width / 2,
-      0,
-      Math.PI * 2
-    );
-    context.stroke();
     context.drawImage(
       this.image,
       this.frameX * this.width,
@@ -45,10 +34,17 @@ export class Player {
     );
   }
 
+  restart() {
+    this.x = 100;
+    this.y = this.gameHeight;
+    this.maxFrame = 8
+    this.frameY = 0
+  }
+
   update(input, deltaTime, enemies) {
     enemies.forEach((enemy) => {
-      const dx = (enemy.x + enemy.width / 2) - (this.x + this.width / 2);
-      const dy = (enemy.y + enemy.height / 2) - (this.y + this.height / 2);
+      const dx = enemy.x + enemy.width / 2 - (this.x + this.width / 2);
+      const dy = enemy.y + enemy.height / 2 - (this.y + this.height / 2);
       const distance = Math.sqrt(dx * dx + dy * dy);
       if (distance < enemy.width / 2 + this.width / 2) {
         console.log("collision detected");

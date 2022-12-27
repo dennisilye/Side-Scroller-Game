@@ -13,7 +13,7 @@ export class Background {
     context.drawImage(this.image, this.x, this.y, this.width, this.height);
     context.drawImage(
       this.image,
-      this.x + this.width -2 ,
+      this.x + this.width - 2,
       this.y,
       this.width,
       this.height
